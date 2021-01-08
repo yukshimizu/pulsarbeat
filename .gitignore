@@ -1,0 +1,10 @@
+/.idea
+/build
+
+.DS_Store
+/pulsarbeat
+/pulsarbeat.test
+/go.mod
+/go.sum
+*.pyc
+*.bak

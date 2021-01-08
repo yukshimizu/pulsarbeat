@@ -1,0 +1,29 @@
+- key: pulsarbeat
+  title: pulsarbeat
+  description:
+  fields:
+    - name: pulsar.topic
+      type: keyword
+      required: true
+      description: >
+        Topic get the topic from which this message originated from.
+    - name: pulsar.producer
+      type: keyword
+      required: true
+      description: >
+        ProducerName returns the name of the producer that has published the message.
+    - name: pulsar.key
+      type: keyword
+      required: false
+      description: >
+        Key get the key of the message, if any.
+    - name: pulsar.timestamp
+      type: date
+      required: true
+      description: >
+        PublishTime get the publish time of this message. The publish time is the timestamp that a client publish the message.
+    - name: message
+      type: text
+      required: true
+      description: >
+        Message payload of Pulsar message itself.

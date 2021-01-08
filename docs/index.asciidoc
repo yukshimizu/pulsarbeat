@@ -1,0 +1,6 @@
+:Beat: pulsarbeat
+= {Beat} Docs
+
+Welcome to the {Beat} documentation.
+
+

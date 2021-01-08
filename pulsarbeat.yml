@@ -1,0 +1,253 @@
+################### {Beat} Configuration Example #########################
+
+############################# {Beat} ######################################
+
+pulsarbeat:
+  # Configure pulsar client options.
+  client:
+    # Configure the service URL for the Pulsar service.
+    # This parameter is required
+    url: "pulsar://localhost:6650"
+    # Timeout for the establishment of a TCP connection (default: 30 seconds).
+    connection_timeout : 30s
+    # Set the operation timeout (default: 30 seconds).
+    # Producer-create, subscribe and unsubscribe operations will be retried until
+    # this interval, after which the operation will be marked as failed.
+    operation_timeout: 30s
+    # Configure either TLS or Athenz authentication provider.
+    #authentication_tls:
+    #  certificate_path: "/path_to/admin.cert.pem"
+    #  private_key_path: "/path_to/admin.key-pk8.pem"
+    #authentication_athenz: {
+    #  "providerDomain":"pulsar",
+    #  "tenantDomain":"shopping",
+    #  "tenantService":"some_app",
+    #  "privateKey":"file:///path_to/some_app_private.pem",
+    #  "keyId":"v0",
+    #  "ztsUrl":"https://athenz.local:8443/zts/v1"
+    #}
+    # Set the path to the trusted TLS certificate file.
+    #tls_trust_certs_file_path: "/path_to/ca.cert.pem"
+    # Configure whether the Pulsar client accept untrusted TLS certificate from
+    # broker (default: false).
+    #tls_allow_insecure_connection: false
+    # Configure whether the Pulsar client verify the validity of the host name from
+    # broker (default: false).
+    #tls_validate_hostname: false
+    # Max number of connections to a single broker that will kept in the pool
+    # (Default: 1 connection).
+    max_connections_per_broker: 1
+
+  # Configure pulsar consumer options.
+  consumer:
+    # Specify the topic this consumer will subscribe on.
+    # Either a topic, a list of topics or a topics pattern are required when subscribing.
+    topic: "my-topic"
+    # Specify a list of topics this consumer will subscribe on.
+    # Either a topic, a list of topics or a topics pattern are required when subscribing.
+    #topics: ["my-topic"]
+    # Specify a regular expression to subscribe to multiple topics under the same namespace.
+    #topics_pattern:
+    # Specify the interval in which to poll for new partitions or new topics
+    # if using a TopicsPattern.
+    #auto_discovery_period: 60s
+    # Specify the subscription name for this consumer.
+    # This argument is required when subscribing.
+    subscription_name: "my-sub"
+    # Attach a set of application defined properties to the consumer.
+    # This properties will be visible in the topic stats.
+    #properties: {"key", "value"}
+    # Select the subscription type to be used when subscribing to the topic.
+    # Default is `Exclusive`.
+    subscription_type: "Exclusive"
+    # InitialPosition at which the cursor will be set when subscribe.
+    # Default is `Latest`.
+    subscription_initial_position: "Latest"
+    # Sets the size of the consumer receive queue.
+    # The consumer receive queue controls how many messages can be accumulated
+    # by the `Consumer` before the application calls `Consumer.receive()`.
+    # Using a higher value could potentially increase the consumer throughput
+    # at the expense of bigger memory utilization.
+    # Default value is `1000` messages and should be good for most use cases.
+    receiver_queue_size: 1000
+    # The delay after which to redeliver the messages that failed to be processed.
+    # Default is 1min (See `Consumer.Nack()`).
+    nack_redelivery_delay: 60s
+    # Set the consumer name.
+    name: "my-consumer"
+    # If enabled, the consumer will read messages from the compacted topic rather
+    # than reading the full message backlog of the topic. This means that,
+    # if the topic has been compacted, the consumer will only see the latest value for
+    # each key in the topic, up until the point in the topic message backlog
+    # that has been compacted. Beyond that point, the messages will be sent as normal.
+    #
+    # ReadCompacted can only be enabled subscriptions to persistent topics,
+    # which have a single active consumer (i.e. failure or exclusive subscriptions).
+    # Attempting to enable it on subscriptions to a non-persistent topics or on a
+    # shared subscription, will lead to the subscription call throwing a PulsarClientException.
+    read_compacted: false
+    # Mark the subscription as replicated to keep it in sync across clusters.
+    replicate_subscription_state: false
+    # Number of go routine workers
+    num_workers: 1
+
+
+# ================================== General ===================================
+
+# The name of the shipper that publishes the network data. It can be used to group
+# all the transactions sent by a single shipper in the web interface.
+#name:
+
+# The tags of the shipper are included in their own field with each
+# transaction published.
+#tags: ["service-X", "web-tier"]
+
+# Optional fields that you can specify to add additional information to the
+# output.
+#fields:
+#  env: staging
+
+# ================================= Dashboards =================================
+# These settings control loading the sample dashboards to the Kibana index. Loading
+# the dashboards is disabled by default and can be enabled either by setting the
+# options here or by using the `setup` command.
+#setup.dashboards.enabled: false
+
+# The URL from where to download the dashboards archive. By default this URL
+# has a value which is computed based on the Beat name and version. For released
+# versions, this URL points to the dashboard archive on the artifacts.elastic.co
+# website.
+#setup.dashboards.url:
+
+# =================================== Kibana ===================================
+
+# Starting with Beats version 6.0.0, the dashboards are loaded via the Kibana API.
+# This requires a Kibana endpoint configuration.
+setup.kibana:
+
+  # Kibana Host
+  # Scheme and port can be left out and will be set to the default (http and 5601)
+  # In case you specify and additional path, the scheme is required: http://localhost:5601/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:5601
+  #host: "localhost:5601"
+
+  # Kibana Space ID
+  # ID of the Kibana Space into which the dashboards should be loaded. By default,
+  # the Default Space will be used.
+  #space.id:
+
+# =============================== Elastic Cloud ================================
+
+# These settings simplify using Pulsarbeat with the Elastic Cloud (https://cloud.elastic.co/).
+
+# The cloud.id setting overwrites the `output.elasticsearch.hosts` and
+# `setup.kibana.host` options.
+# You can find the `cloud.id` in the Elastic Cloud web UI.
+#cloud.id:
+
+# The cloud.auth setting overwrites the `output.elasticsearch.username` and
+# `output.elasticsearch.password` settings. The format is `<user>:<pass>`.
+#cloud.auth:
+
+# ================================== Outputs ===================================
+
+# Configure what output to use when sending the data collected by the beat.
+
+# ---------------------------- Elasticsearch Output ----------------------------
+output.elasticsearch:
+  # Array of hosts to connect to.
+  hosts: ["localhost:9200"]
+
+  # Protocol - either `http` (default) or `https`.
+  #protocol: "https"
+
+  # Authentication credentials - either API key or username/password.
+  #api_key: "id:api_key"
+  #username: "elastic"
+  #password: "changeme"
+
+# ------------------------------ Logstash Output -------------------------------
+#output.logstash:
+  # The Logstash hosts
+  #hosts: ["localhost:5044"]
+
+  # Optional SSL. By default is off.
+  # List of root certificates for HTTPS server verifications
+  #ssl.certificate_authorities: ["/etc/pki/root/ca.pem"]
+
+  # Certificate for SSL client authentication
+  #ssl.certificate: "/etc/pki/client/cert.pem"
+
+  # Client Certificate Key
+  #ssl.key: "/etc/pki/client/cert.key"
+
+# ================================= Processors =================================
+
+# Configure processors to enhance or manipulate events generated by the beat.
+
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+
+
+# ================================== Logging ===================================
+
+# Sets log level. The default log level is info.
+# Available log levels are: error, warning, info, debug
+#logging.level: debug
+
+# At debug level, you can selectively enable logging only for some components.
+# To enable all selectors use ["*"]. Examples of other selectors are "beat",
+# "publisher", "service".
+#logging.selectors: ["*"]
+
+# ============================= X-Pack Monitoring ==============================
+# Pulsarbeat can export internal metrics to a central Elasticsearch monitoring
+# cluster.  This requires xpack monitoring to be enabled in Elasticsearch.  The
+# reporting is disabled by default.
+
+# Set to true to enable the monitoring reporter.
+#monitoring.enabled: false
+
+# Sets the UUID of the Elasticsearch cluster under which monitoring data for this
+# Pulsarbeat instance will appear in the Stack Monitoring UI. If output.elasticsearch
+# is enabled, the UUID is derived from the Elasticsearch cluster referenced by output.elasticsearch.
+#monitoring.cluster_uuid:
+
+# Uncomment to send the metrics to Elasticsearch. Most settings from the
+# Elasticsearch output are accepted here as well.
+# Note that the settings should point to your Elasticsearch *monitoring* cluster.
+# Any setting that is not set is automatically inherited from the Elasticsearch
+# output configuration, so if you have the Elasticsearch output configured such
+# that it is pointing to your Elasticsearch monitoring cluster, you can simply
+# uncomment the following line.
+#monitoring.elasticsearch:
+
+# ============================== Instrumentation ===============================
+
+# Instrumentation support for the pulsarbeat.
+#instrumentation:
+    # Set to true to enable instrumentation of pulsarbeat.
+    #enabled: false
+
+    # Environment in which pulsarbeat is running on (eg: staging, production, etc.)
+    #environment: ""
+
+    # APM Server hosts to report instrumentation results to.
+    #hosts:
+    #  - http://localhost:8200
+
+    # API Key for the APM Server(s).
+    # If api_key is set then secret_token will be ignored.
+    #api_key:
+
+    # Secret token for the APM Server(s).
+    #secret_token:
+
+
+# ================================= Migration ==================================
+
+# This allows to enable 6.7 migration aliases
+#migration.6_to_7.enabled: true
+
